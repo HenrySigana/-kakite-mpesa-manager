@@ -1,0 +1,39 @@
+{
+  "name": "M-Pesa Agent Manager",
+  "short_name": "M-Pesa Agent",
+  "description": "Float & Commission Manager for M-Pesa Agents",
+  "start_url": "/MPESA-MANAGER/index.html",
+  "scope": "/MPESA-MANAGER/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d1f14",
+  "theme_color": "#00a550",
+  "lang": "en",
+  "categories": ["finance", "business", "productivity"],
+  "icons": [
+    { "src": "/MPESA-MANAGER/icons/icon-72x72.png",   "sizes": "72x72",   "type": "image/png", "purpose": "any maskable" },
+    { "src": "/MPESA-MANAGER/icons/icon-96x96.png",   "sizes": "96x96",   "type": "image/png", "purpose": "any maskable" },
+    { "src": "/MPESA-MANAGER/icons/icon-128x128.png", "sizes": "128x128", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/MPESA-MANAGER/icons/icon-144x144.png", "sizes": "144x144", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/MPESA-MANAGER/icons/icon-152x152.png", "sizes": "152x152", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/MPESA-MANAGER/icons/icon-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/MPESA-MANAGER/icons/icon-384x384.png", "sizes": "384x384", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/MPESA-MANAGER/icons/icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Transaction",
+      "short_name": "Transact",
+      "description": "Record a new M-Pesa transaction",
+      "url": "/MPESA-MANAGER/index.html#transact",
+      "icons": [{ "src": "/MPESA-MANAGER/icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Day Book",
+      "short_name": "Day Book",
+      "description": "Open or close today's day",
+      "url": "/MPESA-MANAGER/index.html#daybook",
+      "icons": [{ "src": "/MPESA-MANAGER/icons/icon-96x96.png", "sizes": "96x96" }]
+    }
+  ]
+}
