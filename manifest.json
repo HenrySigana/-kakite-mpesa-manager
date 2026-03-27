@@ -1,42 +1,43 @@
 {
   "name": "M-Pesa Agent Manager",
   "short_name": "M-Pesa Agent",
-  "description": "Float & Commission Manager for M-Pesa Agents",
-  "id": "/kakite-mpesa-manager/",
-  "start_url": "/kakite-mpesa-manager/",
-  "scope": "/kakite-mpesa-manager/",
+  "description": "Kakite Investment — Float & Commission Manager",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#0d1f14",
   "theme_color": "#00a550",
-  "orientation": "portrait-primary",
+  "lang": "en",
+  "categories": ["finance", "business", "productivity"],
   "icons": [
     {
-      "src": "/kakite-mpesa-manager/icons/icon-192x192.png",
+      "src": "icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/kakite-mpesa-manager/icons/icon-512x512.png",
+      "src": "icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ],
   "screenshots": [
     {
-      "src": "/kakite-mpesa-manager/icons/screenshot-wide.png",
+      "src": "screenshots/screenshot1.png",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "M-Pesa Agent Manager Dashboard"
+      "label": "M-Pesa Agent Dashboard"
     },
     {
-      "src": "/kakite-mpesa-manager/icons/screenshot-mobile.png",
-      "sizes": "720x1280",
+      "src": "screenshots/screenshot1.png",
+      "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "M-Pesa Agent Manager Mobile"
+      "label": "M-Pesa Agent Mobile"
     }
   ]
 }
