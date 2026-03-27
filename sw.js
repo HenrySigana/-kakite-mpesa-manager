@@ -1,6 +1,9 @@
+// M-Pesa Agent Manager — Service Worker
+// Kakite Investment PWA
+
 const CACHE_NAME = 'mpesa-agent-v1';
-const ASSETS = [
-  '.',
+const STATIC_ASSETS = [
+  './',
   './index.html',
   './manifest.json',
   './icons/icon-192x192.png',
@@ -9,79 +12,93 @@ const ASSETS = [
   'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'
 ];
 
-// Install — cache all assets
+// ─── Install: cache static assets ───────────────────────────────────────────
 self.addEventListener('install', event => {
+  console.log('[SW] Installing...');
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(ASSETS).catch(err => {
-        console.warn('Some assets failed to cache:', err);
-      });
+      // Cache what we can — fonts & CDN might fail, that's okay
+      return Promise.allSettled(
+        STATIC_ASSETS.map(url =>
+          cache.add(url).catch(err => console.warn('[SW] Could not cache:', url, err))
+        )
+      );
+    }).then(() => {
+      console.log('[SW] Installed successfully');
+      return self.skipWaiting();
     })
   );
-  self.skipWaiting();
 });
 
-// Activate — clear old caches
+// ─── Activate: clean old caches ──────────────────────────────────────────────
 self.addEventListener('activate', event => {
+  console.log('[SW] Activating...');
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(
-        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
+        keys
+          .filter(key => key !== CACHE_NAME)
+          .map(key => {
+            console.log('[SW] Deleting old cache:', key);
+            return caches.delete(key);
+          })
       )
-    )
+    ).then(() => {
+      console.log('[SW] Activated');
+      return self.clients.claim();
+    })
   );
-  self.clients.claim();
 });
 
-// Fetch — serve from cache, fall back to network
+// ─── Fetch: Network-first for Supabase, Cache-first for static ───────────────
 self.addEventListener('fetch', event => {
-  // Skip non-GET and Supabase API calls (always need live data)
-  if (event.request.method !== 'GET') return;
-  if (event.request.url.includes('supabase.co')) return;
+  const url = new URL(event.request.url);
 
+  // Always network-first for Supabase API calls (live data matters)
+  if (url.hostname.includes('supabase.co') || url.hostname.includes('supabase.io')) {
+    event.respondWith(
+      fetch(event.request).catch(() => {
+        // If offline, return a generic offline response for API calls
+        return new Response(
+          JSON.stringify({ error: 'Offline — data unavailable', offline: true }),
+          { status: 503, headers: { 'Content-Type': 'application/json' } }
+        );
+      })
+    );
+    return;
+  }
+
+  // For Google Fonts and CDN — network first, fall back to cache
+  if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('cdn.jsdelivr.net') || url.hostname.includes('fonts.gstatic.com')) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // For local files — Cache-first, then network
   event.respondWith(
     caches.match(event.request).then(cached => {
       if (cached) return cached;
       return fetch(event.request).then(response => {
-        // Cache new valid responses
+        // Cache successful responses
         if (response && response.status === 200 && response.type !== 'opaque') {
           const clone = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         }
         return response;
       }).catch(() => {
-        // Offline fallback — return index.html
-        return caches.match('./index.html');
+        // If completely offline and requesting the main page, serve cached index
+        if (event.request.destination === 'document') {
+          return caches.match('./index.html');
+        }
       });
     })
   );
 });
-```
-
----
-
-## File 3 — Create the Icons folder
-
-You need an `icons` folder with two PNG files:
-- `icons/icon-192x192.png`
-- `icons/icon-512x512.png`
-
-The quickest way is to use this free tool:
-👉 **[https://realfavicongenerator.net](https://realfavicongenerator.net)**
-
-1. Upload any image (your M-Pesa logo or a green 📱 icon)
-2. Download the generated icons
-3. Rename them to `icon-192x192.png` and `icon-512x512.png`
-4. Put them in an `icons/` folder next to your `index.html`
-
----
-
-## Your final folder structure should look like:
-```
-your-repo/
-├── index.html
-├── manifest.json        ← new
-├── sw.js                ← new
-└── icons/
-    ├── icon-192x192.png ← new
-    └── icon-512x512.png ← new
